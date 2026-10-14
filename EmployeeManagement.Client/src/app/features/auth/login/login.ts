@@ -52,7 +52,34 @@ export class Login {
 	  return;
 	}
   
+
     this.loading = true;
+
+    if (this.authService.isDemoMode()) {
+      const success = this.authService.loginDemo(
+        this.username,
+        this.password
+      );
+
+      this.loading = false;
+
+      if (!success) {
+        this.errorMessage =
+          'Invalid demo credentials. Please check the demo accounts.';
+        this.showErrorMessage = true;
+        return;
+      }
+
+      const role = this.authService.getUserRole()?.toLowerCase();
+
+      if (role === 'admin') {
+        this.router.navigate(['/admin-dashboard']);
+      } else {
+        this.router.navigate(['/leave']);
+      }
+
+      return;
+    }
 
     this.authService.login(this.username.trim(), this.password)
       .subscribe({
@@ -60,14 +87,15 @@ export class Login {
           this.loading = false;
 
           const role = this.authService.getUserRole()?.toLowerCase();
-          console.log('Logged-in role:', role);
+
           if (role === 'admin') {
             this.router.navigate(['/admin-dashboard']);
           } else if (role === 'employee') {
             this.router.navigate(['/leave']);
           } else {
             this.authService.logout();
-            this.errorMessage = 'Unable to determine your user role. Please contact the administrator.';
+            this.errorMessage =
+              'Unable to determine your user role. Please contact the administrator.';
             this.showErrorMessage = true;
             this.cdr.detectChanges();
           }
@@ -75,8 +103,8 @@ export class Login {
         error: (error) => {
           console.error('Login failed:', error);
           this.loading = false;
-		  this.showErrorMessage = true;
-		  
+          this.showErrorMessage = true;
+
           if (error.status === 401 || error.status === 400) {
             this.errorMessage = 'Invalid username or password.';
           } else if (error.status === 0) {
@@ -87,7 +115,7 @@ export class Login {
               error.error?.message ||
               `Login failed (HTTP ${error.status || 'unknown'}).`;
           }
-	      
+
           this.cdr.detectChanges();
         }
       });

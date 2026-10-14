@@ -15,6 +15,35 @@ export class AuthService {
 
   private readonly apiUrl = 'https://localhost:7148/api/Auth';
 
+  isDemoMode(): boolean {
+    return typeof window !== 'undefined'
+      && window.location.hostname.endsWith('azurestaticapps.net');
+  }
+
+  loginDemo(username: string, password: string): boolean {
+    if (!this.isDemoMode()) {
+      return false;
+    }
+
+    const normalizedUsername = username.trim().toLowerCase();
+
+    if (normalizedUsername === 'demo-admin' && password === 'DemoAdmin123!') {
+      localStorage.setItem('demoRole', 'admin');
+      localStorage.setItem('demoUsername', 'demo-admin');
+      localStorage.removeItem('authToken');
+      return true;
+    }
+
+    if (normalizedUsername === 'demo-employee' && password === 'DemoEmployee123!') {
+      localStorage.setItem('demoRole', 'employee');
+      localStorage.setItem('demoUsername', 'demo-employee');
+      localStorage.removeItem('authToken');
+      return true;
+    }
+
+    return false;
+  }
+
   login(
     username: string,
     password: string
@@ -35,12 +64,17 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('demoRole');
+    localStorage.removeItem('demoUsername');
   }
 
   isLoggedIn(): boolean {
+    if (this.isDemoMode()) {
+      return !!localStorage.getItem('demoRole');
+    }
+
     return !!this.getToken();
   }
-
 
   changePassword(
     currentPassword: string,
@@ -58,6 +92,10 @@ export class AuthService {
   }
 
   getUserRole(): string | null {
+    if (this.isDemoMode()) {
+      return localStorage.getItem('demoRole');
+    }
+
     const token = this.getToken();
 
     if (!token) {
@@ -95,6 +133,10 @@ export class AuthService {
   }
 
   getUsername(): string | null {
+    if (this.isDemoMode()) {
+      return localStorage.getItem('demoUsername');
+    }
+
     const token = this.getToken();
 
     if (!token) {

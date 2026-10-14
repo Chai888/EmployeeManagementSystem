@@ -2,7 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 export interface LoginResponse {
   token: string;
 }
@@ -13,11 +13,10 @@ export interface LoginResponse {
 export class AuthService {
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Auth';
+  private readonly apiUrl = `${environment.apiUrl}/Auth`;
 
   isDemoMode(): boolean {
-    return typeof window !== 'undefined'
-      && window.location.hostname.endsWith('azurestaticapps.net');
+    return false;
   }
 
   loginDemo(username: string, password: string): boolean {

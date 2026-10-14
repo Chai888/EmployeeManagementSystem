@@ -2,6 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 import { LeaveBalance, LeaveRequest, CreateLeaveRequest, UpdateLeaveStatusRequest } from '../../features/leave/models/leave.model';
 
@@ -12,10 +13,10 @@ export class LeaveService {
   private http = inject(HttpClient);
 
   private readonly balanceUrl =
-    'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/LeaveBalance';
+    `${environment.apiUrl}/LeaveBalance`;
 
   private readonly requestUrl =
-    'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/LeaveRequest';
+    `${environment.apiUrl}/LeaveRequest`;
 
   getMyBalance(year: number): Observable<LeaveBalance> {
     const params = new HttpParams().set('year', year);

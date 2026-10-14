@@ -2,6 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface Employee {
   id: number;
@@ -53,7 +54,7 @@ export interface CreateDepartment {
 export class EmployeeService {
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Employee';
+  private readonly apiUrl = `${environment.apiUrl}/Employee`;
 
   getEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.apiUrl);
@@ -82,14 +83,14 @@ export class EmployeeService {
   }
 
   getDepartments(): Observable<Department[]> {
-    return this.http.get<Department[]>('https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Department');
+    return this.http.get<Department[]>(`${environment.apiUrl}/Department`);
   }
 
   createDepartment(
     department: CreateDepartment
   ): Observable<Department> {
     return this.http.post<Department>(
-      'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Department',
+      `${environment.apiUrl}/Department`,
       department
     );
   }
@@ -99,14 +100,14 @@ export class EmployeeService {
     department: CreateDepartment
   ): Observable<Department> {
     return this.http.put<Department>(
-      `https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Department/${id}`,
+      `${environment.apiUrl}/Department/${id}`,
       department
     );
   }
 
   deleteDepartment(id: number): Observable<void> {
     return this.http.delete<void>(
-      `https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Department/${id}`
+      `${environment.apiUrl}/Department/${id}`
     );
   }
 }

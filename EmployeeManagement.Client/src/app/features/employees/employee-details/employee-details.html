@@ -1,0 +1,202 @@
+
+  <header class="page-header">
+    <div class="header-brand">
+      <div class="brand-icon">E</div>
+      <div>
+        <h1>Employee Management</h1>
+        <p>View employee information</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" routerLink="/leave">
+        Leave Dashboard
+      </button>
+      @if (isAdmin) {
+      <button type="button" class="btn btn-secondary" routerLink="/departments">
+        Departments
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/leave-approval">
+        Leave Approval
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/public-holidays">
+        Public Holidays
+      </button>
+      }
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/change-password">
+        Change Password
+      </button>
+
+      <button type="button" class="btn btn-logout" (click)="onLogout()">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="details-page">
+    <!-- Loading -->
+    <div *ngIf="loading" class="state-card">
+      <div class="loading-spinner"></div>
+      <p>Loading employee details...</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="!loading && errorMessage" class="state-card error-state">
+      <div class="state-icon">!</div>
+      <h2>Unable to Load Employee</h2>
+      <p>{{ errorMessage }}</p>
+
+      @if (isAdmin) {
+      <button type="button"
+              class="btn btn-secondary"
+              (click)="goBack()">
+        Back to Employees
+      </button>
+      }
+    </div>
+
+    <div *ngIf="successMessage && showSuccessMessage"
+         class="success-message"
+         role="status">
+
+      <span class="message-text">{{ successMessage }}</span>
+
+      <button type="button"
+              class="message-close"
+              aria-label="Close success message"
+              (click)="closeSuccessMessage()">
+        &times;
+      </button>
+    </div>
+
+    <!-- Employee Details -->
+    <ng-container *ngIf="!loading && employee as emp">
+      <div class="page-heading">
+        <div>
+          <h2>Employee Details</h2>
+          <p>View employee profile and employment information.</p>
+        </div>
+
+        @if (isAdmin) {
+        <button type="button"
+                class="btn btn-secondary"
+                (click)="goBack()">
+          <span aria-hidden="true">←</span>
+          Back to Employees
+        </button>
+        }
+      </div>
+
+      <!-- Employee Profile -->
+      <section class="profile-card">
+        <div class="profile-avatar">
+          {{ emp.name.charAt(0).toUpperCase() }}
+        </div>
+
+        <div class="profile-info">
+          <h2>{{ emp.name }}</h2>
+          <p class="employee-reference">
+            {{ emp.employeeNo }} · {{ emp.position }}
+          </p>
+
+          <span class="status-badge"
+                [ngClass]="emp.isActive ? 'status-active' : 'status-inactive'">
+            <span class="status-dot"></span>
+            {{ emp.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+      </section>
+
+      <!-- Information -->
+      <section class="information-card">
+        <div class="section-heading">
+          <div>
+            <h3>Employment Information</h3>
+            <p>Employee's registered details</p>
+          </div>
+        </div>
+
+        <div class="information-grid">
+          <div class="information-item">
+            <span class="information-label">Employee Number</span>
+            <span class="information-value">{{ emp.employeeNo }}</span>
+          </div>
+
+          <div class="information-item">
+            <span class="information-label">Full Name</span>
+            <span class="information-value">{{ emp.name }}</span>
+          </div>
+
+          <div class="information-item">
+            <span class="information-label">Email Address</span>
+            <span class="information-value">{{ emp.email }}</span>
+          </div>
+
+          <div class="information-item">
+            <span class="information-label">Department</span>
+            <span class="information-value">{{ emp.department || 'Not assigned' }}</span>
+          </div>
+
+          <div class="information-item">
+            <span class="information-label">Position</span>
+            <span class="information-value">{{ emp.position }}</span>
+          </div>
+
+          <div class="information-item">
+            <span class="information-label">Join Date</span>
+            <span class="information-value">
+              {{ emp.joinDate | date:'dd MMM yyyy' }}
+            </span>
+          </div>
+
+          <div class="information-item">
+            <span class="information-label">Employment Status</span>
+            <span class="information-value">
+              {{ emp.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Delete Error -->
+      <div *ngIf="deleteError" class="error-message" role="alert">
+        {{ deleteError }}
+      </div>
+
+      <!-- Actions -->
+      @if (isAdmin) {
+      <div class="action-footer">
+        <button type="button"
+                class="btn delete-button"
+                (click)="deleteEmployee()"
+                [disabled]="deleting">
+          {{ deleting ? 'Deleting...' : 'Delete Employee' }}
+        </button>
+
+        <div class="right-actions">
+          <button type="button"
+                  class="btn btn-primary"
+                  [routerLink]="['/leave-entitlement']"
+                  [queryParams]="{ employeeId: employee.id }">
+            Leave Entitlement
+          </button>
+
+          <button type="button"
+                  class="btn btn-primary"
+                  [routerLink]="['/employees', emp.id, 'edit']">
+            Edit Employee
+          </button>
+        </div>
+      </div>
+      }
+    </ng-container>
+  </main>

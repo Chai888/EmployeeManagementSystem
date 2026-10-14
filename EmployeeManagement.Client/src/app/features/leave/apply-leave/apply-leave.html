@@ -1,0 +1,185 @@
+  <header class="dashboard-header">
+    <div class="brand">
+      <div class="brand-icon">L</div>
+      <div>
+        <h1>Leave Management</h1>
+        <p>Apply leave</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button"
+              class="btn btn-secondary"
+              [routerLink]="employeeId ? ['/employees', employeeId] : null"
+              [disabled]="!employeeId">
+        My Profile
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/change-password">
+        Change Password
+      </button>
+
+      <button type="button"
+              class="btn btn-logout"
+              (click)="logout()">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <div class="form-page">
+    <div class="form-heading">
+      <h2>Apply for Leave</h2>
+      <p>Enter your leave details below.</p>
+    </div>
+
+    <form #leaveForm="ngForm"
+          (ngSubmit)="submitLeave()"
+          class="leave-form">
+
+      <div *ngIf="balanceError" class="error-message" role="alert">
+        {{ balanceError }}
+      </div>
+
+      <div *ngIf="errorMessage"
+           class="error-message"
+           role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage"
+           class="success-message"
+           role="status">
+        {{ successMessage }}
+      </div>
+
+      <div *ngIf="insufficientBalance"
+           class="error-message"
+           role="alert">
+        Insufficient leave balance. You have {{ availableDays }} day(s)
+        available, but selected {{ requestedDays }} day(s).
+      </div>
+
+      <div class="balance-summary" *ngIf="!loadingBalance && balance">
+        <div>
+          <span>Remaining balance</span>
+          <strong>{{ balance.remainingDays }} days</strong>
+        </div>
+
+        <div>
+          <span>Pending leave</span>
+          <strong>{{ pendingDays }} days</strong>
+        </div>
+
+        <div>
+          <span>Available to apply</span>
+          <strong>{{ availableDays }} days</strong>
+        </div>
+      </div>
+
+      <div *ngIf="loadingBalance" class="info-message">
+        Loading your leave balance...
+      </div>
+
+      <div *ngIf="calculatingRequestedDays" class="info-message">
+        Calculating working days...
+      </div>
+
+      <div *ngIf="!calculatingRequestedDays && requestedDays > 0"
+           class="info-message">
+        Requested duration: {{ requestedDays }} working day(s)
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="leaveType">Leave Type *</label>
+
+          <select id="leaveType"
+                  name="leaveType"
+                  [(ngModel)]="leaveType"
+                  (ngModelChange)="onLeaveTypeChange()"
+                  required
+                  #leaveTypeInput="ngModel">
+
+            <option *ngFor="let item of balances"
+                    [value]="item.leaveType">
+              {{ item.leaveType }}
+            </option>
+          </select>
+
+          <small *ngIf="leaveTypeInput.invalid && leaveTypeInput.touched">
+            Please select a leave type.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="startDate">Start Date *</label>
+
+          <input id="startDate"
+                 name="startDate"
+                 type="date"
+                 [(ngModel)]="startDate"
+                 (ngModelChange)="calculateRequestedDays()"
+                 required
+                 #startDateInput="ngModel">
+
+          <small *ngIf="startDateInput.invalid && startDateInput.touched">
+            Start date is required.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="endDate">End Date *</label>
+
+          <input id="endDate"
+                 name="endDate"
+                 type="date"
+                 [(ngModel)]="endDate"
+                 (ngModelChange)="calculateRequestedDays()"
+                 [min]="startDate || null"
+                 required
+                 #endDateInput="ngModel">
+
+          <small *ngIf="endDateInput.invalid && endDateInput.touched">
+            End date is required.
+          </small>
+
+          <small *ngIf="startDate && endDate && endDate < startDate">
+            End date cannot be earlier than start date.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="reason">Reason</label>
+
+          <textarea id="reason"
+                    name="reason"
+                    [(ngModel)]="reason"
+                    maxlength="500"
+                    rows="3"
+                    placeholder="Enter the reason for your leave"></textarea>
+
+          <small class="character-count">
+            {{ reason.length }}/500 characters
+          </small>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button"
+                class="btn btn-secondary"
+                (click)="cancel()"
+                [disabled]="submitting">
+          Cancel
+        </button>
+
+        <button type="submit"
+                class="btn btn-primary"
+                [disabled]="leaveForm.invalid || submitting || loadingBalance || !balance || !startDate || !endDate || endDate < startDate || calculatingRequestedDays || insufficientBalance">
+          {{ submitting ? 'Submitting...' : 'Submit Leave Request' }}
+        </button>
+      </div>
+    </form>
+  </div>

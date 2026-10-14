@@ -1,0 +1,244 @@
+
+<div class="department-page">
+  <header class="page-header">
+    <div class="header-brand">
+      <div class="brand-icon">D</div>
+      <div>
+        <h1>Department Management</h1>
+        <p>Manage your organisation's departments</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" routerLink="/leave">
+        Leave Dashboard
+      </button>
+      <button type="button" class="btn btn-secondary" routerLink="/employees">
+        Employees
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/leave-approval">
+        Leave Approval
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/public-holidays">
+        Public Holidays
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/change-password">
+        Change Password
+      </button>
+
+      <button type="button"
+              class="btn btn-logout"
+              (click)="logout()">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <div class="page-title-row">
+      <div>
+        <h2>Departments</h2>
+        <p>View and manage all departments.</p>
+      </div>
+
+      <button type="button"
+              class="btn btn-primary"
+              (click)="openAddForm()"
+              [disabled]="loading || saving">
+        + Add Department
+      </button>
+    </div>
+
+    <!-- Success message -->
+    <div *ngIf="successMessage && showSuccessMessage"
+         class="message success-message"
+         role="status">
+      <span class="message-text">{{ successMessage }}</span>
+
+      <button type="button"
+              class="message-close"
+              aria-label="Close success message"
+              (click)="closeSuccessMessage()">
+        &times;
+      </button>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="errorMessage && showErrorMessage"
+         class="message error-message"
+         role="alert">
+      <span class="message-text">{{ errorMessage }}</span>
+
+      <button type="button"
+              class="message-close"
+              aria-label="Close error message"
+              (click)="closeErrorMessage()">
+        &times;
+      </button>
+    </div>
+
+    <!-- Add / Edit form -->
+    <section class="form-card" *ngIf="showForm">
+      <div class="form-card-header">
+        <div>
+          <h3>
+            {{ editingId === null ? 'Add Department' : 'Edit Department' }}
+          </h3>
+          <p>
+            {{
+ editingId === null
+              ? 'Enter the new department details.'
+              : 'Update the department name.'
+            }}
+          </p>
+        </div>
+      </div>
+
+      <form #departmentForm="ngForm" (ngSubmit)="saveDepartment()">
+        <div class="form-field">
+          <label for="departmentName">Department Name</label>
+
+          <input id="departmentName"
+                 name="departmentName"
+                 type="text"
+                 [(ngModel)]="departmentName"
+                 #nameInput="ngModel"
+                 required
+                 maxlength="100"
+                 placeholder="e.g. Human Resources"
+                 [disabled]="saving" />
+
+          <small class="field-error"
+                 *ngIf="nameInput.invalid && nameInput.touched">
+            Department name is required (maximum 100 characters).
+          </small>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit"
+                  class="btn btn-primary"
+                  [disabled]="saving || departmentForm.invalid">
+            {{
+ saving
+              ? 'Saving...'
+              : editingId === null
+                ? 'Create Department'
+                : 'Save Changes'
+            }}
+          </button>
+
+          <button type="button"
+                  class="btn btn-secondary"
+                  (click)="cancelForm()"
+                  [disabled]="saving">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Department table -->
+    <section class="table-card">
+      <div class="table-card-header">
+        <div>
+          <h3>All Departments</h3>
+          <p>{{ departments.length }} department(s)</p>
+        </div>
+
+        <button type="button"
+                class="btn btn-secondary btn-refresh"
+                (click)="loadDepartments()"
+                [disabled]="loading">
+          Refresh
+        </button>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        Loading departments...
+      </div>
+
+      <div class="table-responsive" *ngIf="!loading">
+        <table *ngIf="departments.length > 0; else emptyState">
+          <thead>
+            <tr>
+              <th class="number-column">No.</th>
+              <th>Department Name</th>
+              <th>Employees</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let department of departments; let i = index">
+              <td>{{ i + 1 }}</td>
+
+              <td>
+                <div class="department-name">
+                  <span class="department-icon">D</span>
+                  <span>{{ department.name }}</span>
+                </div>
+              </td>
+
+              <td>
+                <span class="employee-count">
+                  {{ department.employeeCount }}
+                  {{ department.employeeCount === 1 ? 'employee' : 'employees' }}
+                </span>
+              </td>
+
+              <td>
+                <div class="row-actions">
+                  <button type="button"
+                          class="btn btn-edit"
+                          (click)="openEditForm(department)"
+                          [disabled]="saving || deletingId !== null">
+                    Edit
+                  </button>
+
+                  <button type="button"
+                          class="btn btn-delete"
+                          (click)="deleteDepartment(department)"
+                          [disabled]="saving || deletingId !== null || department.employeeCount> 0">
+                    {{ deletingId === department.id ? 'Deleting...' : 'Delete' }}
+                  </button>
+                </div>
+
+                <small class="delete-hint"
+                       *ngIf="department.employeeCount > 0">
+                  Employees are assigned to this department.
+                </small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <div class="empty-icon">D</div>
+            <h3>No departments found</h3>
+            <p>Create your first department to get started.</p>
+
+            <button type="button"
+                    class="btn btn-primary"
+                    (click)="openAddForm()">
+              + Add Department
+            </button>
+          </div>
+        </ng-template>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    Employee Management System
+  </footer>
+</div>

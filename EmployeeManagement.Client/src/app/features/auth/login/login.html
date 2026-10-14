@@ -1,0 +1,113 @@
+<div class="login-page">
+  <div class="login-card">
+
+    <div class="login-brand">
+      <div class="brand-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="10" cy="7" r="4"/>
+          <path d="M20 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+
+      <h1>Employee Management</h1>
+      <p>Welcome back! Please sign in to continue.</p>
+    </div>
+
+    <div class="login-heading">
+      <h2>Sign in</h2>
+    </div>
+
+	<div *ngIf="errorMessage && showErrorMessage"
+         class="error-message"
+         role="status">
+    
+      <span class="message-text">{{ errorMessage }}</span>
+    
+      <button
+        type="button"
+        class="message-close"
+        aria-label="Close error message"
+        (click)="closeErrorMessage()">
+        &times;
+      </button>
+    </div>
+		  
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="form-field">
+        <label for="username">Username</label>
+
+        <input
+          id="username"
+          name="username"
+          type="text"
+          [(ngModel)]="username"
+          autocomplete="username"
+          placeholder="Enter your username"
+          required
+          [disabled]="loading"
+        />
+      </div>
+	  
+      <div class="form-field">
+        <label for="password">Password</label>
+
+        <div class="password-wrapper">
+          <input
+            id="password"
+            name="password"
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            autocomplete="current-password"
+            placeholder="Enter your password"
+            required
+            [disabled]="loading"
+          />
+
+          <button
+            class="password-toggle"
+            type="button"
+            (click)="showPassword = !showPassword"
+            [disabled]="loading"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+      </div>
+
+      <button
+        class="login-button"
+        type="submit"
+        [disabled]="loading">
+
+        <span *ngIf="!loading">Sign In</span>
+
+        <span *ngIf="loading" class="loading-content">
+          <span class="loading-spinner"></span>
+          Signing in...
+        </span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <span class="footer-line"></span>
+      <p>Secure Employee Management Portal</p>
+      <span class="footer-line"></span>
+    </div>
+
+  </div>
+
+  <p class="copyright">
+    Employee Management System
+  </p>
+</div>

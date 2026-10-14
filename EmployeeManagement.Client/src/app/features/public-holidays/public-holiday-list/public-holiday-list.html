@@ -1,0 +1,295 @@
+<div class="holiday-page">
+  <header class="page-header">
+    <div class="header-brand">
+      <div class="brand-icon">H</div>
+      <div>
+        <h1>Public Holiday Management</h1>
+        <p>Manage national public holidays</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" routerLink="/leave">
+        Leave Dashboard
+      </button>
+
+      <button type="button" class="btn btn-secondary" routerLink="/employees">
+        Employees
+      </button>
+
+      <button type="button" class="btn btn-secondary" routerLink="/departments">
+        Departments
+      </button>
+
+      <button type="button" class="btn btn-secondary" routerLink="/leave-approval">
+        Leave Approval
+      </button>
+
+      <button type="button" class="btn btn-secondary" routerLink="/change-password">
+        Change Password
+      </button>
+
+      <button type="button" class="btn btn-logout" (click)="logout()">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <div class="page-title-row">
+      <div>
+        <h2>Public Holidays</h2>
+        <p>Maintain public holiday dates used in leave calculations.</p>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="openAddForm()"
+        [disabled]="loading || saving || deletingId !== null">
+        + Add Public Holiday
+      </button>
+    </div>
+
+    <div
+      *ngIf="successMessage && showSuccessMessage"
+      class="message success-message"
+      role="status">
+      <span class="message-text">{{ successMessage }}</span>
+      <button
+        type="button"
+        class="message-close"
+        aria-label="Close success message"
+        (click)="closeSuccessMessage()">
+        &times;
+      </button>
+    </div>
+
+    <div
+      *ngIf="errorMessage && showErrorMessage"
+      class="message error-message"
+      role="alert">
+      <span class="message-text">{{ errorMessage }}</span>
+      <button
+        type="button"
+        class="message-close"
+        aria-label="Close error message"
+        (click)="closeErrorMessage()">
+        &times;
+      </button>
+    </div>
+
+    <section class="form-card" *ngIf="showForm">
+      <div class="form-card-header">
+        <div>
+          <h3>
+            {{ editingId === null ? 'Add Public Holiday' : 'Edit Public Holiday' }}
+          </h3>
+          <p>
+            {{
+              editingId === null
+                ? 'Enter the public holiday details.'
+                : 'Update the public holiday details.'
+            }}
+          </p>
+        </div>
+      </div>
+
+      <form #holidayForm="ngForm" (ngSubmit)="saveHoliday()">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="holidayName">Holiday Name</label>
+            <input
+              id="holidayName"
+              name="holidayName"
+              type="text"
+              [(ngModel)]="holidayName"
+              #nameInput="ngModel"
+              required
+              maxlength="100"
+              placeholder="e.g. National Day"
+              [disabled]="saving" />
+
+            <small
+              class="field-error"
+              *ngIf="nameInput.invalid && nameInput.touched">
+              Holiday name is required (maximum 100 characters).
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="holidayDate">Date</label>
+            <input
+              id="holidayDate"
+              name="holidayDate"
+              type="date"
+              [(ngModel)]="holidayDate"
+              #dateInput="ngModel"
+              required
+              [disabled]="saving" />
+
+            <small
+              class="field-error"
+              *ngIf="dateInput.invalid && dateInput.touched">
+              Holiday date is required.
+            </small>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="holidayDescription">Description (Optional)</label>
+            <textarea
+              id="holidayDescription"
+              name="holidayDescription"
+              [(ngModel)]="holidayDescription"
+              maxlength="250"
+              rows="3"
+              placeholder="Enter a description"
+              [disabled]="saving"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="saving || holidayForm.invalid || deletingId !== null">
+            {{
+              saving
+                ? 'Saving...'
+                : editingId === null
+                  ? 'Create Public Holiday'
+                  : 'Save Changes'
+            }}
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="cancelForm()"
+            [disabled]="saving">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="table-card">
+      <div class="table-card-header">
+        <div>
+          <h3>Holiday List</h3>
+          <p>{{ holidays.length }} holiday(s) in {{ selectedYear }}</p>
+        </div>
+
+        <div class="table-actions">
+          <div class="year-filter">
+            <label for="yearFilter">Year</label>
+            <select
+              id="yearFilter"
+              name="yearFilter"
+              [(ngModel)]="selectedYear"
+              (ngModelChange)="onYearChange()"
+              [disabled]="loading">
+              <option *ngFor="let year of years" [ngValue]="year">
+                {{ year }}
+              </option>
+            </select>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="loadHolidays()"
+            [disabled]="loading">
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        Loading public holidays...
+      </div>
+
+      <div class="table-responsive" *ngIf="!loading">
+        <table *ngIf="holidays.length > 0; else emptyState">
+          <thead>
+            <tr>
+              <th class="number-column">No.</th>
+              <th>Holiday Name</th>
+              <th>Date</th>
+              <th>Description</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let holiday of holidays; let i = index">
+              <td>{{ i + 1 }}</td>
+
+              <td>
+                <div class="holiday-name">
+                  <span class="holiday-icon">H</span>
+                  <span>{{ holiday.name }}</span>
+                </div>
+              </td>
+
+              <td>
+                <span class="date-badge">
+                  {{ holiday.date | date:'dd MMM yyyy' }}
+                </span>
+              </td>
+
+              <td class="description-cell">
+                {{ holiday.description || '—' }}
+              </td>
+
+              <td>
+                <div class="row-actions">
+                  <button
+                    type="button"
+                    class="btn btn-edit"
+                    (click)="openEditForm(holiday)"
+                    [disabled]="saving || deletingId !== null">
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-delete"
+                    (click)="deleteHoliday(holiday)"
+                    [disabled]="saving || deletingId !== null">
+                    {{
+                      deletingId === holiday.id
+                        ? 'Deleting...'
+                        : 'Delete'
+                    }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <div class="empty-icon">H</div>
+            <h3>No public holidays found</h3>
+            <p>
+              No holidays have been registered for {{ selectedYear }}.
+            </p>
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="openAddForm()">
+              + Add Public Holiday
+            </button>
+          </div>
+        </ng-template>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    Employee Management System
+  </footer>
+</div>

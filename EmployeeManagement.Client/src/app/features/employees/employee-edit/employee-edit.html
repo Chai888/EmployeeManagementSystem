@@ -1,0 +1,251 @@
+<header class="dashboard-header">
+  <div class="header-brand">
+    <div class="brand-icon">D</div>
+
+    <div class="brand-text">
+      <h1>Employee Management System</h1>
+      <p>Update employee information</p>
+    </div>
+  </div>
+
+  <nav class="header-actions">
+    <button type="button" class="btn btn-secondary"
+            (click)="cancel()">
+      Leave Dashboard
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/leave-approval">
+      Leave Approval
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/public-holidays">
+      Public Holidays
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/change-password">
+      Change Password
+    </button>
+
+    <button type="button" class="btn btn-logout"
+            (click)="logout()">
+      Logout
+    </button>
+  </nav>
+</header>
+
+<main class="edit-page">
+
+  <!-- Page heading -->
+  <div class="page-heading">
+    <div>
+      <h2>Edit Employee</h2>
+      <p>Update the employee's details below.</p>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="cancel()">
+      ← Back to Details
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="state-card">
+    <div class="loading-spinner"></div>
+    <p>Loading employee information...</p>
+  </div>
+
+  <!-- Error -->
+  <div
+    *ngIf="!loading && errorMessage"
+    class="error-message"
+    role="alert">
+    <span class="error-icon">!</span>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Edit form -->
+  <section
+    *ngIf="!loading && !errorMessage"
+    class="form-card">
+
+    <div class="form-card-heading">
+      <div class="heading-icon">
+        <span aria-hidden="true">✎</span>
+      </div>
+
+      <div>
+        <h3>Employee Information</h3>
+        <p>Fields marked with * are required.</p>
+      </div>
+    </div>
+
+    <form
+      #employeeForm="ngForm"
+      (ngSubmit)="onUpdateEmployee(employeeForm)">
+
+      <div class="form-grid">
+
+        <!-- Employee Number -->
+        <div class="form-field">
+          <label for="employeeNo">Employee No. *</label>
+          <input
+            id="employeeNo"
+            name="employeeNo"
+            [(ngModel)]="employee.employeeNo"
+            required
+            #employeeNo="ngModel"
+            placeholder="e.g. EMP001" />
+
+          <small
+            *ngIf="employeeNo.invalid && employeeNo.touched">
+            Employee number is required.
+          </small>
+        </div>
+
+        <!-- Full Name -->
+        <div class="form-field">
+          <label for="name">Full Name *</label>
+          <input
+            id="name"
+            name="name"
+            [(ngModel)]="employee.name"
+            required
+            #name="ngModel"
+            placeholder="Enter full name" />
+
+          <small *ngIf="name.invalid && name.touched">
+            Full name is required.
+          </small>
+        </div>
+
+        <!-- Email -->
+        <div class="form-field">
+          <label for="email">Email Address *</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            [(ngModel)]="employee.email"
+            required
+            email
+            #email="ngModel"
+            placeholder="name@example.com" />
+
+          <small *ngIf="email.invalid && email.touched">
+            Enter a valid email address.
+          </small>
+        </div>
+
+        <!-- Department -->
+        <div class="form-field">
+          <label for="departmentId">Department *</label>
+          <select
+            id="departmentId"
+            name="departmentId"
+            [(ngModel)]="employee.departmentId"
+            required
+            [disabled]="departments.length === 0"
+            #departmentId="ngModel">
+
+            <option [ngValue]="0" disabled>
+              Select a department
+            </option>
+
+            <option
+              *ngFor="let department of departments"
+              [ngValue]="department.id">
+              {{ department.name }}
+            </option>
+          </select>
+
+          <small
+            *ngIf="departmentId.touched && employee.departmentId <= 0">
+            Please select a department.
+          </small>
+        </div>
+
+        <!-- Position -->
+        <div class="form-field">
+          <label for="position">Position *</label>
+          <input
+            id="position"
+            name="position"
+            [(ngModel)]="employee.position"
+            required
+            #position="ngModel"
+            placeholder="e.g. Software Engineer" />
+
+          <small *ngIf="position.invalid && position.touched">
+            Position is required.
+          </small>
+        </div>
+
+        <!-- Join Date -->
+        <div class="form-field">
+          <label for="joinDate">Join Date *</label>
+          <input
+            id="joinDate"
+            type="date"
+            name="joinDate"
+            [(ngModel)]="employee.joinDate"
+            required
+            #joinDate="ngModel" />
+
+          <small *ngIf="joinDate.invalid && joinDate.touched">
+            Join date is required.
+          </small>
+        </div>
+
+      </div>
+
+      <!-- Active status -->
+      <div class="active-section">
+        <div class="active-description">
+          <strong>Employee Status</strong>
+          <p>Choose whether this employee is currently active.</p>
+        </div>
+
+        <label class="active-toggle">
+          <input
+            type="checkbox"
+            name="isActive"
+            [(ngModel)]="employee.isActive" />
+
+          <span class="toggle-track"></span>
+          <span class="active-label">
+            {{ employee.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </label>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancel()">
+          Back
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="employeeForm.invalid || saving">
+
+          <span *ngIf="!saving">Save Changes</span>
+          <span *ngIf="saving">Saving Changes...</span>
+        </button>
+      </div>
+
+    </form>
+  </section>
+
+</main>

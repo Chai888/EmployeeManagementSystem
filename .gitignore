@@ -1,0 +1,18 @@
+
+# .NET build output
+**/bin/
+**/obj/
+
+# Angular dependencies and build output
+**/node_modules/
+**/dist/
+
+# Visual Studio local files
+.vs/
+*.user
+*.suo
+
+# Local environment files
+.env
+.env.*
+!.env.example

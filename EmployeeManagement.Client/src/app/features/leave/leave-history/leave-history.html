@@ -1,0 +1,170 @@
+
+<header class="dashboard-header">
+  <div class="header-brand">
+    <div class="brand-icon">L</div>
+    <div class="brand-text">
+      <h1>Leave Management</h1>
+      <p>Manage leave history</p>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/employees">
+      Employees
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/departments">
+      Departments
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/leave-approval">
+      Leave Approval
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/public-holidays">
+      Public Holidays
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/change-password">
+      Change Password
+    </button>
+
+    <button type="button"
+            class="btn btn-logout"
+            (click)="logout()">
+      Logout
+    </button>
+  </div>
+</header>
+
+<main class="page-container">
+  <div class="page-heading">
+    <div>
+      <h2>Leave History</h2>
+      <p>View the history of approved and rejected leave requests.</p>
+    </div>
+
+    <button type="button"
+            class="btn btn-secondary"
+            (click)="goBack()">
+      Back to Dashboard
+    </button>
+  </div>
+
+  <section class="content-card">
+    <div class="card-toolbar">
+      <div>
+        <h3>Leave Approval Records</h3>
+        <p>
+          {{ totalCount }} record(s) found.
+        </p>
+      </div>
+
+      <div class="filter-control">
+        <label for="actionFilter">Filter by Status</label>
+
+        <select id="actionFilter"
+                [(ngModel)]="selectedAction"
+                (ngModelChange)="onFilterChange()">
+          <option value="">All Statuses</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <span>{{ errorMessage }}</span>
+
+      <button type="button"
+              class="alert-close"
+              (click)="errorMessage = ''">
+        ×
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      Loading leave history...
+    </div>
+
+    <div *ngIf="!loading && !errorMessage && logs.length === 0"
+         class="empty-state">
+      <h3>No Leave History Found</h3>
+      <p>
+        Approved or rejected leave requests will appear here once recorded.
+      </p>
+    </div>
+
+    <div class="table-wrapper"
+         *ngIf="!loading && logs.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Date &amp; Time (UTC)</th>
+            <th>Processed By</th>
+            <th>Decision</th>
+            <th>Request ID</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let log of logs">
+            <td>
+              {{ log.createdAtUtc | date:'dd MMM yyyy, HH:mm':'UTC' }}
+            </td>
+
+            <td>{{ log.username }}</td>
+
+            <td>
+              <span class="status-badge"
+                    [class.status-approved]="log.action.toLowerCase().includes('approv')"
+                    [class.status-rejected]="log.action.toLowerCase().includes('reject')">
+                {{ log.action }}
+              </span>
+            </td>
+
+            <td>{{ log.entityId || '-' }}</td>
+
+            <td class="details-cell">
+              {{ log.details || '-' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination"
+         *ngIf="!loading && totalCount > 0">
+      <span>
+        Showing page {{ page }} of {{ totalPages }}
+      </span>
+
+      <div class="pagination-actions">
+        <button type="button"
+                class="btn btn-secondary"
+                [disabled]="page <= 1"
+                (click)="previousPage()">
+          Previous
+        </button>
+
+        <button type="button"
+                class="btn btn-secondary"
+                [disabled]="page >= totalPages"
+                (click)="nextPage()">
+          Next
+        </button>
+      </div>
+    </div>
+  </section>
+</main>

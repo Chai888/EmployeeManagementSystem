@@ -1,0 +1,233 @@
+
+<header class="dashboard-header">
+  <div class="header-brand">
+    <div class="brand-icon">D</div>
+
+    <div class="brand-text">
+      <h1>Employee Management System</h1>
+      <p>Manage your workforce efficiently</p>
+    </div>
+  </div>
+
+  <nav class="header-actions">
+    <button type="button" class="btn btn-secondary" routerLink="/leave">
+      Leave Dashboard
+    </button>
+    <button type="button" class="btn btn-secondary" routerLink="/departments">
+      Departments
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/leave-approval">
+      Leave Approval
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/public-holidays">
+      Public Holidays
+    </button>
+
+    <button type="button"
+            class="btn btn-secondary"
+            routerLink="/change-password">
+      Change Password
+    </button>
+
+    <button type="button" class="btn btn-logout"
+            (click)="onLogout()">
+      Logout
+    </button>
+  </nav>
+</header>
+
+<div class="form-page">
+  <div *ngIf="!createdAccount; else accountCreated">
+    <div class="form-heading">
+      <h2>Add New Employee</h2>
+      <p>Enter the employee details below.</p>
+    </div>
+
+    <form #employeeForm="ngForm"
+          (ngSubmit)="onCreateEmployee(employeeForm)"
+          class="employee-form">
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="employeeNo">Employee No *</label>
+          <input id="employeeNo"
+                 name="employeeNo"
+                 [(ngModel)]="newEmployee.employeeNo"
+                 required
+                 #employeeNo="ngModel"
+                 placeholder="e.g. EMP001" />
+          <small *ngIf="employeeNo.invalid && employeeNo.touched">
+            Employee No is required.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="name">Full Name *</label>
+          <input id="name"
+                 name="name"
+                 [(ngModel)]="newEmployee.name"
+                 required
+                 #name="ngModel"
+                 placeholder="Enter full name" />
+          <small *ngIf="name.invalid && name.touched">
+            Name is required.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="email">Email *</label>
+          <input id="email"
+                 name="email"
+                 type="email"
+                 [(ngModel)]="newEmployee.email"
+                 required
+                 email
+                 #email="ngModel"
+                 placeholder="name@example.com" />
+          <small *ngIf="email.invalid && email.touched">
+            Enter a valid email address.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="departmentId">Department *</label>
+          <select id="departmentId"
+                  name="departmentId"
+                  [(ngModel)]="newEmployee.departmentId"
+                  required
+                  [disabled]="departments.length === 0"
+                  #departmentId="ngModel">
+            <option [ngValue]="0" disabled>Select a department</option>
+            <option *ngFor="let department of departments"
+                    [ngValue]="department.id">
+              {{ department.name }}
+            </option>
+          </select>
+          <small *ngIf="departmentId.invalid && departmentId.touched">
+            Please select a department.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="position">Position *</label>
+          <input id="position"
+                 name="position"
+                 [(ngModel)]="newEmployee.position"
+                 required
+                 #position="ngModel"
+                 placeholder="e.g. Software Engineer" />
+          <small *ngIf="position.invalid && position.touched">
+            Position is required.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="joinDate">Join Date *</label>
+          <input id="joinDate"
+                 name="joinDate"
+                 type="date"
+                 [(ngModel)]="newEmployee.joinDate"
+                 required
+                 #joinDate="ngModel" />
+          <small *ngIf="joinDate.invalid && joinDate.touched">
+            Join date is required.
+          </small>
+        </div>
+      </div>
+
+      <div class="active-field">
+        <input id="isActive"
+               name="isActive"
+               type="checkbox"
+               [(ngModel)]="newEmployee.isActive" />
+        <label for="isActive">Active employee</label>
+      </div>
+
+      <div *ngIf="createErrorMessage"
+           class="error-message"
+           role="alert">
+        {{ createErrorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button type="button"
+                class="cancel-button"
+                (click)="onCancel()">
+          Back
+        </button>
+
+        <button type="submit"
+                class="add-employee-button"
+                [disabled]="employeeForm.invalid || saving">
+          {{ saving ? 'Saving...' : 'Save Employee' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <ng-template #accountCreated>
+    <div class="form-heading">
+      <h2>Employee Created Successfully</h2>
+      <p>
+        The employee login account has been created.
+        Provide the following credentials to the employee securely.
+      </p>
+    </div>
+
+    <div class="employee-form">
+      <div class="form-field">
+        <label>Employee Name</label>
+        <p>{{ createdAccount?.name }}</p>
+      </div>
+
+      <div class="form-field">
+        <label>Username</label>
+        <div class="credential-row">
+          <input [value]="createdAccount?.username || ''" readonly />
+          <button type="button"
+                  class="add-employee-button"
+                  (click)="copyText(createdAccount!.username, 'Username')">
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Temporary Password</label>
+        <div class="credential-row">
+          <input [value]="createdAccount?.temporaryPassword || ''"
+                 readonly />
+          <button type="button"
+                  class="add-employee-button"
+                  (click)="copyText(createdAccount!.temporaryPassword, 'Password')">
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <p>
+        <strong>Important:</strong>
+        Save the temporary password now. It is intended to be shown only
+        on this successful creation screen.
+      </p>
+
+      <p *ngIf="copyStatusMessage" role="status">
+        {{ copyStatusMessage }}
+      </p>
+
+      <div class="form-actions">
+        <button type="button"
+                class="add-employee-button"
+                (click)="onContinueToEmployees()">
+          Continue to Employee List
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,141 @@
+
+<div class="leave-page">
+  <header class="dashboard-header">
+    <div class="brand">
+      <div class="brand-icon">L</div>
+      <div>
+        <h1>Leave Management</h1>
+        <p>Manage your leave</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/employees">
+        Employees
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/departments">
+        Departments
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/public-holidays">
+        Public Holidays
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/change-password">
+        Change Password
+      </button>
+
+      <button type="button"
+              class="btn btn-logout"
+              (click)="logout()">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="leave-content">
+    <section class="welcome-section">
+      <div>
+        <h2>Leave Dashboard</h2>
+        <p>Overview of employee leave requests and approvals.</p>
+      </div>
+
+      <button type="button"
+              class="btn btn-primary"
+              (click)="loadLeaveStatistics()"
+              [disabled]="loading">
+        {{ loading ? 'Refreshing...' : 'Refresh' }}
+      </button>
+    </section>
+
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <span>{{ errorMessage }}</span>
+      <button type="button"
+              class="alert-close"
+              aria-label="Dismiss error"
+              (click)="errorMessage = ''">
+        ×
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="message-card">
+      Loading leave statistics...
+    </div>
+
+    <ng-container *ngIf="!loading && !errorMessage">
+      <section class="balance-section">
+        <div class="section-heading">
+          <div>
+            <h3>Leave Overview</h3>
+            <p>Summary of all employee leave requests.</p>
+          </div>
+        </div>
+
+        <div class="balance-grid">
+          <article class="balance-card pending-card">
+            <div class="balance-label">Pending Requests</div>
+            <div class="balance-value">{{ pendingCount }}</div>
+            <div class="balance-caption">Awaiting your review</div>
+          </article>
+
+          <article class="balance-card approved-card">
+            <div class="balance-label">Approved Requests</div>
+            <div class="balance-value">{{ approvedCount }}</div>
+            <div class="balance-caption">Successfully approved</div>
+          </article>
+
+          <article class="balance-card rejected-card">
+            <div class="balance-label">Rejected Requests</div>
+            <div class="balance-value">{{ rejectedCount }}</div>
+            <div class="balance-caption">Requests not approved</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="requests-section">
+        <div class="section-heading">
+          <div>
+            <h3>Leave Request Management</h3>
+            <p>
+              You have {{ pendingCount }} request(s) awaiting review.
+            </p>
+          </div>
+
+          <button type="button"
+                  class="btn btn-primary"
+                  routerLink="/leave-approval">
+            Manage Leave Requests
+          </button>
+        </div>
+      </section>
+
+
+      <section class="requests-section">
+        <div class="section-heading">
+          <div>
+            <h3>Leave Approval History</h3>
+            <p>
+              View approved and rejected leave requests and their audit records.
+            </p>
+          </div>
+
+          <button type="button"
+                  class="btn btn-primary"
+                  routerLink="/leave-history">
+            View Leave History
+          </button>
+        </div>
+      </section>
+
+    </ng-container>
+  </main>
+</div>

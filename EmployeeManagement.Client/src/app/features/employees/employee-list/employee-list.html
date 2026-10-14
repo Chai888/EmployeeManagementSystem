@@ -1,0 +1,215 @@
+
+<div class="employee-page">
+  <header class="page-header">
+    <div class="header-brand">
+      <div class="brand-icon">E</div>
+      <div>
+        <h1>Employee Management</h1>
+        <p>Manage your employees</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" routerLink="/leave">
+        Leave Dashboard
+      </button>
+      <button type="button" class="btn btn-secondary" routerLink="/departments">
+        Departments
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/leave-approval">
+        Leave Approval
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/public-holidays">
+        Public Holidays
+      </button>
+
+      <button type="button"
+              class="btn btn-secondary"
+              routerLink="/change-password">
+        Change Password
+      </button>
+
+      <button type="button" class="btn btn-logout" (click)="onLogout()">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <div class="page-title-row">
+      <div>
+        <h2>Employees</h2>
+        <p>View and manage all employees.</p>
+      </div>
+
+      <button type="button"
+              class="btn btn-primary"
+              routerLink="/employees/new">
+        + Add New Employee
+      </button>
+    </div>
+
+    <div *ngIf="successMessage && showSuccessMessage"
+         class="message success-message"
+         role="status">
+      <span class="message-text">{{ successMessage }}</span>
+      <button type="button" class="message-close"
+              aria-label="Close success message"
+              (click)="closeSuccessMessage()">
+        &times;
+      </button>
+    </div>
+
+    <div *ngIf="errorMessage && showErrorMessage"
+         class="message error-message"
+         role="alert">
+      <span class="message-text">{{ errorMessage }}</span>
+      <button type="button" class="message-close"
+              aria-label="Close error message"
+              (click)="closeErrorMessage()">
+        &times;
+      </button>
+    </div>
+
+    <section class="filter-card">
+      <div class="filter-heading">
+        <div>
+          <h3>Search and Filter</h3>
+          <p>Find employees by number, name, email, department or status.</p>
+        </div>
+
+        <button type="button"
+                class="btn btn-secondary"
+                (click)="searchText = ''; selectedDepartment = ''; selectedStatus = 'all'">
+          Clear Filters
+        </button>
+      </div>
+
+      <div class="employee-filters">
+        <div class="form-field">
+          <label for="searchText">Search Employees</label>
+          <input id="searchText"
+                 type="search"
+                 name="searchText"
+                 [(ngModel)]="searchText"
+                 placeholder="Employee no, name or email">
+        </div>
+
+        <div class="form-field">
+          <label for="departmentFilter">Department</label>
+          <select id="departmentFilter"
+                  name="departmentFilter"
+                  [(ngModel)]="selectedDepartment">
+            <option value="">All Departments</option>
+            <option *ngFor="let department of departments" [value]="department">
+              {{ department }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter"
+                  name="statusFilter"
+                  [(ngModel)]="selectedStatus">
+            <option value="all">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="table-card">
+      <div class="table-card-header">
+        <div>
+          <h3>All Employees</h3>
+          <p>
+            Showing {{ filteredEmployees.length }} of
+            {{ employees.length }} employee(s)
+          </p>
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        Loading employees...
+      </div>
+
+      <div class="table-responsive" *ngIf="!loading && !errorMessage">
+        <table *ngIf="filteredEmployees.length > 0; else emptyState">
+          <thead>
+            <tr>
+              <th class="number-column">No.</th>
+              <th>Employee No.</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let employee of filteredEmployees; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ employee.employeeNo }}</td>
+              <td class="employee-name">{{ employee.name }}</td>
+              <td>{{ employee.email }}</td>
+              <td>{{ employee.department || 'Not assigned' }}</td>
+              <td>
+                <span class="status-badge"
+                      [class.status-active]="employee.isActive"
+                      [class.status-inactive]="!employee.isActive">
+                  {{ employee.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>
+                <button type="button"
+                        class="btn btn-edit"
+                        [routerLink]="['/employees', employee.id]">
+                  View
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <div class="empty-icon">E</div>
+            <h3>
+              {{
+ employees.length === 0
+                  ? 'No employees found'
+                  : 'No matching employees'
+              }}
+            </h3>
+            <p>
+              {{
+ employees.length === 0
+                  ? 'Add your first employee to get started.'
+                  : 'Try changing your search or filters.'
+              }}
+            </p>
+            <button *ngIf="employees.length === 0"
+                    type="button"
+                    class="btn btn-primary"
+                    routerLink="/employees/new">
+              + Add New Employee
+            </button>
+          </div>
+        </ng-template>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    Employee Management System
+  </footer>
+</div>

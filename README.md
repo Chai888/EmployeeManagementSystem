@@ -119,6 +119,23 @@ Screenshots of the login page, administrator dashboard, employee management, and
 - Additional integration tests
 - Improved application monitoring and documentation
 
+## Screenshots
+
+### Login Page
+![Login Page](docs/screenshots/login.png)
+
+### Admin Dashboard
+![Admin Dashboard](docs/screenshots/admin-dashboard.png)
+
+### Employee Management
+![Employee Management](docs/screenshots/employee-management.png)
+
+### Leave Application
+![Leave Application](docs/screenshots/leave-application.png)
+
+### Leave Approval
+![Leave Approval](docs/screenshots/leave-approval.png)
+
 ## Author
 
 **Chai888**

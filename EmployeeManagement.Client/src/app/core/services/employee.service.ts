@@ -53,7 +53,7 @@ export interface CreateDepartment {
 export class EmployeeService {
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'https://localhost:7148/api/Employee';
+  private readonly apiUrl = 'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Employee';
 
   getEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.apiUrl);
@@ -82,14 +82,14 @@ export class EmployeeService {
   }
 
   getDepartments(): Observable<Department[]> {
-    return this.http.get<Department[]>('https://localhost:7148/api/Department');
+    return this.http.get<Department[]>('https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Department');
   }
 
   createDepartment(
     department: CreateDepartment
   ): Observable<Department> {
     return this.http.post<Department>(
-      'https://localhost:7148/api/Department',
+      'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Department',
       department
     );
   }
@@ -99,14 +99,14 @@ export class EmployeeService {
     department: CreateDepartment
   ): Observable<Department> {
     return this.http.put<Department>(
-      `https://localhost:7148/api/Department/${id}`,
+      `https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Department/${id}`,
       department
     );
   }
 
   deleteDepartment(id: number): Observable<void> {
     return this.http.delete<void>(
-      `https://localhost:7148/api/Department/${id}`
+      `https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Department/${id}`
     );
   }
 }

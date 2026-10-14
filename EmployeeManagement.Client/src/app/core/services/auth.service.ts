@@ -13,7 +13,7 @@ export interface LoginResponse {
 export class AuthService {
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'https://localhost:7148/api/Auth';
+  private readonly apiUrl = 'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/Auth';
 
   isDemoMode(): boolean {
     return typeof window !== 'undefined'

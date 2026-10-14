@@ -27,7 +27,7 @@ export class LeaveEntitlementService {
   private http = inject(HttpClient);
 
   private readonly apiUrl =
-    'https://localhost:7148/api/LeaveEntitlement';
+    'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/LeaveEntitlement';
 
   getForEmployee(
     employeeId: number,

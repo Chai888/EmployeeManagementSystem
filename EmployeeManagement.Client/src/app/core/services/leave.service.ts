@@ -12,10 +12,10 @@ export class LeaveService {
   private http = inject(HttpClient);
 
   private readonly balanceUrl =
-    'https://localhost:7148/api/LeaveBalance';
+    'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/LeaveBalance';
 
   private readonly requestUrl =
-    'https://localhost:7148/api/LeaveRequest';
+    'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/LeaveRequest';
 
   getMyBalance(year: number): Observable<LeaveBalance> {
     const params = new HttpParams().set('year', year);

@@ -20,7 +20,7 @@ export interface PublicHolidayRequest {
 })
 export class PublicHolidayService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'https://localhost:7148/api/PublicHoliday';
+  private readonly apiUrl = 'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api/PublicHoliday';
 
   getAll(year?: number): Observable<PublicHoliday[]> {
     const url = year

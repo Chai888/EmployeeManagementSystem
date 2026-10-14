@@ -29,7 +29,7 @@ export class AuditLogService {
   private http = inject(HttpClient);
 
   private readonly apiUrl =
-    'https://localhost:7148/api/AuditLog';
+    'https://employee-api-888-dwemc5b9dkh4c4h4.malaysiawest-01.azurewebsites.net/api';
 
   getLogs(
     page: number,

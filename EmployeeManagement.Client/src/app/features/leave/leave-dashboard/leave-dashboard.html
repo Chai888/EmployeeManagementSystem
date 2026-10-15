@@ -145,6 +145,12 @@
       </article>
     </section>
 
+    <div *ngIf="successMessage"
+         class="alert alert-success"
+         role="status">
+      {{ successMessage }}
+    </div>
+
     <div *ngIf="errorMessage && showErrorMessage"
          class="alert alert-error"
          role="alert">
@@ -200,6 +206,7 @@
               <th>End Date</th>
               <th>Reason</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -216,6 +223,18 @@
                 <span class="status-badge"
                       [ngClass]="getStatusClass(request.status)">
                   {{ request.status }}
+                </span>
+              </td>
+              <td>
+                <button *ngIf="request.status === 'Pending'"
+                        type="button"
+                        class="btn btn-secondary"
+                        (click)="cancelLeaveRequest(request)"
+                        [disabled]="cancellingRequestId !== null">
+                  {{ cancellingRequestId === request.id ? 'Cancelling...' : 'Cancel' }}
+                </button>
+                <span *ngIf="request.status !== 'Pending'">
+                  —
                 </span>
               </td>
             </tr>

@@ -214,7 +214,9 @@
   <section class="content-card">
     <div class="card-toolbar">
       <div>
-        <h3>Add or Update Entitlement</h3>
+        <h3>
+          {{ editingEntitlementId !== null ? 'Edit Leave Entitlement' : 'Add or Update Entitlement' }}
+        </h3>
         <p>
           Save an entitlement for the selected employee and year.
           Existing leave types will be updated.
@@ -270,7 +272,15 @@
         <button type="submit"
                 class="btn btn-primary"
                 [disabled]="saving || selectedEmployeeId === null">
-          {{ saving ? 'Saving...' : 'Save Entitlement' }}
+          {{ saving ? 'Saving...' : (editingEntitlementId !== null ? 'Update Entitlement' : 'Save Entitlement') }}
+        </button>
+
+        <button *ngIf="editingEntitlementId !== null"
+                type="button"
+                class="btn btn-secondary"
+                (click)="resetForm()"
+                [disabled]="saving">
+          Cancel Edit
         </button>
 
         <button type="button"

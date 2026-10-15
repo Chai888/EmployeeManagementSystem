@@ -74,6 +74,13 @@ export class LeaveService {
     );
   }
 
+  cancelLeaveRequest(id: number): Observable<LeaveRequest> {
+    return this.http.put<LeaveRequest>(
+      `${this.requestUrl}/${id}/cancel`,
+      {}
+    );
+  }
+
   getWorkingDays(
     startDate: string,
     endDate: string

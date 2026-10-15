@@ -240,6 +240,11 @@ tbody tr:hover {
   background: #fee2e2;
 }
 
+.status-cancelled {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
 .empty-icon {
   font-size: 38px;
   color: #9ca3af;

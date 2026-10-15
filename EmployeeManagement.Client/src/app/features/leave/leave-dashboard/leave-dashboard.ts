@@ -31,6 +31,8 @@ export class LeaveDashboard implements OnInit {
   balanceMessage = '';
   errorMessage = '';
   showErrorMessage = true;
+  successMessage = '';
+  cancellingRequestId: number | null = null;
 
   ngOnInit(): void {
     this.loadBalance();
@@ -100,6 +102,54 @@ export class LeaveDashboard implements OnInit {
     });
   }
 
+
+  cancelLeaveRequest(request: LeaveRequest): void {
+    if (request.status !== 'Pending') {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to cancel this ${request.leaveType} request?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    if (this.cancellingRequestId !== null) {
+      return;
+    }
+
+    this.cancellingRequestId = request.id;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.leaveService.cancelLeaveRequest(request.id).subscribe({
+      next: () => {
+        this.cancellingRequestId = null;
+        this.successMessage =
+          'Leave request cancelled successfully.';
+
+        this.loadLeaveRequests();
+        this.loadBalance();
+        this.cdr.detectChanges();
+      },
+      error: error => {
+        console.error('Failed to cancel leave request:', error);
+
+        this.cancellingRequestId = null;
+
+        this.errorMessage =
+          error.error?.message ||
+          (typeof error.error === 'string' ? error.error : '') ||
+          'Unable to cancel this leave request. Please refresh and try again.';
+
+        this.showErrorMessage = true;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   get employeeId(): number | null {
     return this.authService.getEmployeeId();
   }
@@ -132,6 +182,8 @@ export class LeaveDashboard implements OnInit {
         return 'status-approved';
       case 'rejected':
         return 'status-rejected';
+      case 'cancelled':
+        return 'status-cancelled';
       default:
         return 'status-pending';
     }

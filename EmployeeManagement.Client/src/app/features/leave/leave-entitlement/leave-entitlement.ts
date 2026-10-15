@@ -35,6 +35,7 @@ export class LeaveEntitlementPage {
 
   selectedEmployeeId: number | null = null;
   year = new Date().getFullYear();
+  editingEntitlementId: number | null = null;
 
   leaveTypes = [
     'Annual Leave',
@@ -164,6 +165,8 @@ export class LeaveEntitlementPage {
   }
 
   editEntitlement(item: LeaveEntitlement): void {
+    this.editingEntitlementId = item.id;
+
     this.leaveType = this.leaveTypes.includes(item.leaveType)
       ? item.leaveType
       : 'Other';
@@ -174,6 +177,10 @@ export class LeaveEntitlementPage {
     this.entitledDays = item.entitledDays;
     this.errorMessage = '';
     this.successMessage = '';
+
+    // Scroll to the form so the user can edit the selected record.
+    document.querySelector('.entitlement-form')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   saveEntitlement(): void {
@@ -218,9 +225,12 @@ export class LeaveEntitlementPage {
     }).subscribe({
       next: () => {
         this.saving = false;
-        this.successMessage =
-          'Leave entitlement saved successfully.';
+        this.successMessage = this.editingEntitlementId !== null
+          ? 'Leave entitlement updated successfully.'
+          : 'Leave entitlement saved successfully.';
 
+        this.editingEntitlementId = null;
+        this.resetForm();
         this.loadEntitlements();
         this.cdr.detectChanges();
       },
@@ -236,6 +246,7 @@ export class LeaveEntitlementPage {
   }
 
   resetForm(): void {
+    this.editingEntitlementId = null;
     this.leaveType = 'Annual Leave';
     this.customLeaveType = '';
     this.entitledDays = 0;

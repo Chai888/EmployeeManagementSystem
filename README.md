@@ -10,16 +10,26 @@ A full-stack Employee Management System built with **ASP.NET Core Web API, Angul
 - Department management
 - Review and approve or reject employee leave requests
 - View leave request records and history
-- Manage leave entitlements and balances
+- Manage and update employee leave entitlements and balances
 - Manage public holidays
 
 ### Employee
 - Secure login
 - View employee information
 - Submit leave applications
+- Cancel pending leave requests
 - View leave application status and history
 - Check leave entitlement and available balance
 - Change password
+
+## Leave Management
+- Submit and validate leave applications
+- Prevent overlapping leave requests
+- Calculate working days while excluding weekends and configured public holidays
+- Track leave entitlements, used days, and remaining balances
+- Approve or reject pending leave applications
+- Allow employees to cancel pending leave requests
+- Maintain leave request status history and audit logs
 
 ## Technology Stack
 
@@ -102,7 +112,7 @@ Open the local URL displayed by Angular in your browser.
 
 The backend automated test suite has been executed successfully.
 
-**Latest recorded result:** 57 passed, 0 failed, 0 skipped.
+**Latest recorded result:** 64 passed, 0 failed, 0 skipped.
 
 To run the tests:
 
@@ -112,12 +122,18 @@ dotnet test EmployeeManagement.Tests/EmployeeManagement.Tests.csproj
 
 Screenshots of the login page, administrator dashboard, employee management, and leave management pages will be added here.
 
+## Deployment
+
+- Frontend: Azure Static Web Apps
+- Backend: Azure App Service
+- Database: Microsoft SQL Server / Azure SQL Database
+
 ## Future Improvements
 
-- Cloud deployment
-- Continuous integration and automated build validation
-- Additional integration tests
-- Improved application monitoring and documentation
+- Configure CI to run automated tests on every push
+- Expand SQL Server concurrency test coverage
+- Improve application monitoring and error logging
+- Enhance API and deployment documentation
 
 ## Screenshots
 
